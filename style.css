@@ -1,0 +1,53 @@
+
+  /*  CSS RESET
+      ---------------------------- */
+      body,div,figure,figcaption,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,menu,input,textarea,p,blockquote,th,td { margin:0; padding:0; }
+      table { border-collapse:collapse; border-spacing:0; }
+      fieldset,img { border:0; }
+      address,caption,cite,code,dfn,strong,th,var { font-style:normal; font-weight:normal; }      
+      code { font-family: Menlo, Monaco, Courier, monospace; color: #fff; font-size: .7em; padding: 4px; background-color: rgba(53,116,224,.9); border-radius: 3px;}
+      strong { font-weight: bold; font-style: inherit; }
+      ol,ul { list-style:none; }
+      caption,th { text-align:left; }
+      h1,h2,h3,h4,h5,h6 { font-size:100%; font-weight:normal; }
+      q:before,q:after { content:''; }
+      abbr,acronym { border:0; }
+
+ body {
+        font-family: 'DM Mono', Mono;
+        font-size: 48px;
+        background: #7D80BD;
+        color: white;
+      }
+
+article {
+	margin: 3em 2em;
+}
+
+img {max-width:100%; height:auto;
+}
+
+h1 {
+	font-size: 1em;
+	margin: 1em 0;
+	line-height: 1.4;
+}
+
+h2 {
+	font-size: 1em;
+	margin: 1em 0;
+	line-height: 1.4;
+}
+
+p {
+	font-size: 1em;
+	margin: 1em 0;
+	line-height: 1.4;
+}
+
+a {
+	padding:0 .25em;
+	color: white;
+	background: #6C6FAB;
+	border-radius: 15px;
+}
