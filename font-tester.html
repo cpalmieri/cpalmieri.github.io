@@ -8,14 +8,23 @@
     :root{
       --ui-font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica Neue, Arial, sans-serif;
       --stack: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic Medium", "Yu Gothic", "Segoe UI", Roboto, "Noto Sans JP", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
-      --fw: 400;           /* body fallback weight */
-      --fw-h1: 700;        /* heading 1 weight */
-      --fw-h2: 600;        /* heading 2 weight */
-      --fw-p: 400;         /* paragraph weight */
-      --base: 16;          /* px */
-      --col: 48ch;         /* content column width */
-      --bg: #0b0c0f;       /* UI background */
-      --ink: #e6e8eb;      /* UI text */
+
+      /* Weights */
+      --fw-body: 400;
+      --fw-h1: 700;
+      --fw-h2: 600;
+
+      /* Sizes (px). If unset, H1/H2 use clamp() defaults and P inherits base */
+      /* --fs-h1: 48px; */
+      /* --fs-h2: 20px; */
+      /* --fs-p:  16px; */
+
+      --base: 16; /* px */
+      --col: 48ch; /* content column width */
+
+      /* UI colors */
+      --bg: #0b0c0f;
+      --ink: #e6e8eb;
       --muted: #a4acb9;
       --panel: #14161b;
       --accent: #4da3ff;
@@ -49,18 +58,24 @@
       font-weight: 600;
       letter-spacing: .2px;
     }
-    .group { display: grid; gap: 10px; }
-    .field { display: grid; gap: 8px; }
+    .group { display: grid; gap: 12px; }
+    .field { display: grid; gap: 4px; }
     .field label { font-size: 12px; color: var(--muted); }
+
+    /* Form controls — slimmer height + tighter leading */
     textarea, input[type="text"], input[type="number"], select {
       width: 100%;
       background: #0e1014;
       color: var(--ink);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 12px;
-      font: 13px/1.4 var(--ui-font);
+      padding: 6px 10px;           /* was 10px 12px */
+      line-height: 1.2;            /* keep compact */
+      height: auto;                /* avoid oversized selects */
+      font: 13px/1.2 var(--ui-font);
       resize: vertical;
+      appearance: auto;            /* keep native dropdown arrow */
+      -webkit-appearance: menulist;
     }
     textarea.code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -83,19 +98,20 @@
     .preview-wrap {
       padding: 28px clamp(16px, 3vw, 40px);
       overflow: auto;
+      background: #ffffff; /* white preview */
     }
     .sheet {
       font-family: var(--stack);
-      font-weight: var(--fw);
       font-size: calc(var(--base) * 1px);
       line-height: 1.5;
+      color: #000000; /* black text */
     }
     .column { max-width: var(--col); }
 
-    /* Typography */
-    .sheet h1 { font-size: clamp(1.8rem, 2.2rem + 1vw, 3.2rem); line-height: 1.15; margin: 0 0 .6em; font-weight: var(--fw-h1); }
-    .sheet h2 { font-size: clamp(1.1rem, 1.1rem + .4vw, 1.4rem); line-height: 1.25; margin: 0 0 .6em; opacity: .85; font-weight: var(--fw-h2); }
-    .sheet p  { margin: 0 0 1em; font-weight: var(--fw-p); }
+    /* Typography in preview */
+    .sheet h1 { font-size: var(--fs-h1, clamp(1.8rem, 2.2rem + 1vw, 3.2rem)); line-height: 1.15; margin: 0 0 .6em; font-weight: var(--fw-h1); }
+    .sheet h2 { font-size: var(--fs-h2, clamp(1.1rem, 1.1rem + .4vw, 1.4rem)); line-height: 1.25; margin: 0 0 .6em; opacity: .85; font-weight: var(--fw-h2); }
+    .sheet p  { font-size: var(--fs-p, inherit); margin: 0 0 1em; font-weight: var(--fw-body); }
     .sheet code, .sheet pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
     @media (max-width: 800px) {
@@ -113,30 +129,47 @@
         <textarea id="stack" class="code" rows="4" spellcheck="false">-apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic Medium", "Yu Gothic", "Segoe UI", Roboto, "Noto Sans JP", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif</textarea>
       </div>
 
-      <div class="row3" role="group" aria-label="Font weights by element">
-        <div class="field">
-          <label for="w-h1">H1 weight</label>
-          <select id="w-h1"></select>
-        </div>
-        <div class="field">
-          <label for="w-h2">H2 weight</label>
-          <select id="w-h2"></select>
-        </div>
-        <div class="field">
-          <label for="w-p">Paragraph weight</label>
-          <select id="w-p"></select>
-        </div>
-      </div>
-
       <div class="row">
         <div class="field">
           <label for="size">Base size (px)</label>
-          <input id="size" type="number" min="8" max="48" step="1" value="16" />
+          <input id="size" type="number" min="8" max="72" step="1" value="16" />
         </div>
         <div class="field">
-          <label for="width">Text column width (accepts units, e.g. <code>48ch</code>, <code>640px</code>, <code>40rem</code>)</label>
+          <label for="width">Text column width (e.g. 48ch, 640px, 40rem)</label>
           <input id="width" type="text" value="48ch" />
         </div>
+      </div>
+
+      <!-- Weights -->
+      <div class="row3" role="group" aria-label="Font weights by element">
+        <div class="field">
+          <label for="fw-h1">H1 weight</label>
+          <select id="fw-h1"></select>
+        </div>
+        <div class="field">
+          <label for="fw-h2">H2 weight</label>
+          <select id="fw-h2"></select>
+        </div>
+        <div class="field">
+          <label for="fw-body">Paragraph weight</label>
+          <select id="fw-body"></select>
+        </div>
+      </div>
+
+      <!-- Sizes -->
+      <div class="row" role="group" aria-label="Font sizes by element">
+        <div class="field">
+          <label for="fs-h1">H1 size (px, blank = auto)</label>
+          <input id="fs-h1" type="number" min="8" max="160" step="1" placeholder="(auto)" />
+        </div>
+        <div class="field">
+          <label for="fs-h2">H2 size (px, blank = auto)</label>
+          <input id="fs-h2" type="number" min="8" max="120" step="1" placeholder="(auto)" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="fs-p">Paragraph size (px, blank = base)</label>
+        <input id="fs-p" type="number" min="8" max="72" step="1" placeholder="(auto)" />
       </div>
 
       <div class="field">
@@ -146,6 +179,7 @@
 <p>Grumpy wizards make toxic brew for the evil queen. すもももももももものうち。12345 ABCXYZ あいうえお カタカナ ｶﾀｶﾅ 漢字。</p></textarea>
       </div>
     </div>
+
     <div class="actions">
       <button id="reset">Reset</button>
       <button id="save" class="primary" title="Save settings to this browser">Save</button>
@@ -172,18 +206,24 @@
       reset: document.getElementById('reset'),
       save: document.getElementById('save'),
       clear: document.getElementById('clear'),
-      wH1: document.getElementById('w-h1'),
-      wH2: document.getElementById('w-h2'),
-      wP: document.getElementById('w-p'),
+      fwH1: document.getElementById('fw-h1'),
+      fwH2: document.getElementById('fw-h2'),
+      fwBody: document.getElementById('fw-body'),
+      fsH1: document.getElementById('fs-h1'),
+      fsH2: document.getElementById('fs-h2'),
+      fsP:  document.getElementById('fs-p'),
     };
 
     const DEFAULTS = {
       stack: getComputedStyle(document.documentElement).getPropertyValue('--stack').trim(),
-      wH1: '700',
-      wH2: '600',
-      wP: '400',
       size: '16',
       width: '48ch',
+      fwH1: '700',
+      fwH2: '600',
+      fwBody: '400',
+      fsH1: '',
+      fsH2: '',
+      fsP:  '',
       markup: `<h1>日本語と English: Heading One</h1>\n<h2>Small Heading / 見出し</h2>\n<p>Grumpy wizards make toxic brew for the evil queen. すもももももももものうち。12345 ABCXYZ あいうえお カタカナ ｶﾀｶﾅ 漢字。</p>`
     };
 
@@ -197,27 +237,35 @@
       }
     }
 
-    // Fill dropdowns once
-    [els.wH1, els.wH2, els.wP].forEach(populateWeightSelect);
+    [els.fwH1, els.fwH2, els.fwBody].forEach(populateWeightSelect);
+
+    function setPxOrClear(cssVar, val, min=8, max=160){
+      if(val === '' || val == null){
+        document.documentElement.style.removeProperty(cssVar);
+      } else {
+        const n = Math.max(min, Math.min(max, parseInt(val, 10)));
+        document.documentElement.style.setProperty(cssVar, n + 'px');
+      }
+    }
 
     function applyAll(){
-      // Font stack
       document.documentElement.style.setProperty('--stack', els.stack.value);
-      // Element-specific weights
-      const h1 = parseInt(els.wH1.value || DEFAULTS.wH1, 10);
-      const h2 = parseInt(els.wH2.value || DEFAULTS.wH2, 10);
-      const p  = parseInt(els.wP.value  || DEFAULTS.wP, 10);
-      document.documentElement.style.setProperty('--fw-h1', String(h1));
-      document.documentElement.style.setProperty('--fw-h2', String(h2));
-      document.documentElement.style.setProperty('--fw-p',  String(p));
-      // Base size
+
       const size = Math.max(8, Math.min(72, parseInt(els.size.value || '16')));
       document.documentElement.style.setProperty('--base', String(size));
-      // Column width (accepts units; if number only, assume ch)
+
       const raw = (els.width.value || '').trim();
       const col = /^(\d+)(?:\s*)$/.test(raw) ? RegExp.$1 + 'ch' : raw;
       document.documentElement.style.setProperty('--col', col);
-      // Markup
+
+      document.documentElement.style.setProperty('--fw-h1', els.fwH1.value || DEFAULTS.fwH1);
+      document.documentElement.style.setProperty('--fw-h2', els.fwH2.value || DEFAULTS.fwH2);
+      document.documentElement.style.setProperty('--fw-body', els.fwBody.value || DEFAULTS.fwBody);
+
+      setPxOrClear('--fs-h1', els.fsH1.value, 8, 160);
+      setPxOrClear('--fs-h2', els.fsH2.value, 8, 120);
+      setPxOrClear('--fs-p',  els.fsP.value,  8, 72);
+
       els.column.innerHTML = els.markup.value;
     }
 
@@ -226,23 +274,29 @@
         const saved = JSON.parse(localStorage.getItem('fontSandboxSaved') || 'null');
         if(!saved) return;
         els.stack.value = saved.stack ?? els.stack.value;
-        els.wH1.value = saved.wH1 ?? DEFAULTS.wH1;
-        els.wH2.value = saved.wH2 ?? DEFAULTS.wH2;
-        els.wP.value  = saved.wP  ?? DEFAULTS.wP;
-        els.size.value = saved.size ?? els.size.value;
+        els.size.value  = saved.size  ?? els.size.value;
         els.width.value = saved.width ?? els.width.value;
-        els.markup.value = saved.markup ?? els.markup.value;
+        els.fwH1.value  = saved.fwH1  ?? DEFAULTS.fwH1;
+        els.fwH2.value  = saved.fwH2  ?? DEFAULTS.fwH2;
+        els.fwBody.value= saved.fwBody?? DEFAULTS.fwBody;
+        els.fsH1.value  = saved.fsH1  ?? '';
+        els.fsH2.value  = saved.fsH2  ?? '';
+        els.fsP.value   = saved.fsP   ?? '';
+        els.markup.value= saved.markup?? els.markup.value;
       } catch(e) { /* ignore */ }
     }
 
     function save(){
       const snapshot = {
         stack: els.stack.value,
-        wH1: els.wH1.value,
-        wH2: els.wH2.value,
-        wP:  els.wP.value,
         size: els.size.value,
         width: els.width.value,
+        fwH1: els.fwH1.value,
+        fwH2: els.fwH2.value,
+        fwBody: els.fwBody.value,
+        fsH1: els.fsH1.value,
+        fsH2: els.fsH2.value,
+        fsP:  els.fsP.value,
         markup: els.markup.value
       };
       localStorage.setItem('fontSandboxSaved', JSON.stringify(snapshot));
@@ -250,23 +304,28 @@
 
     function reset(){
       els.stack.value = DEFAULTS.stack;
-      els.wH1.value = DEFAULTS.wH1;
-      els.wH2.value = DEFAULTS.wH2;
-      els.wP.value  = DEFAULTS.wP;
-      els.size.value = DEFAULTS.size;
+      els.size.value  = DEFAULTS.size;
       els.width.value = DEFAULTS.width;
-      els.markup.value = DEFAULTS.markup;
+      els.fwH1.value  = DEFAULTS.fwH1;
+      els.fwH2.value  = DEFAULTS.fwH2;
+      els.fwBody.value= DEFAULTS.fwBody;
+      els.fsH1.value  = DEFAULTS.fsH1;
+      els.fsH2.value  = DEFAULTS.fsH2;
+      els.fsP.value   = DEFAULTS.fsP;
+      els.markup.value= DEFAULTS.markup;
       applyAll();
     }
 
-    // Live update handlers
     ['input','change'].forEach(evt => {
       els.stack.addEventListener(evt, applyAll);
-      els.wH1.addEventListener(evt, applyAll);
-      els.wH2.addEventListener(evt, applyAll);
-      els.wP.addEventListener(evt, applyAll);
       els.size.addEventListener(evt, applyAll);
       els.width.addEventListener(evt, applyAll);
+      els.fwH1.addEventListener(evt, applyAll);
+      els.fwH2.addEventListener(evt, applyAll);
+      els.fwBody.addEventListener(evt, applyAll);
+      els.fsH1.addEventListener(evt, applyAll);
+      els.fsH2.addEventListener(evt, applyAll);
+      els.fsP.addEventListener(evt, applyAll);
       els.markup.addEventListener(evt, applyAll);
     });
 
@@ -274,12 +333,7 @@
     els.save.addEventListener('click', () => { save(); applyAll(); });
     els.clear.addEventListener('click', () => { localStorage.removeItem('fontSandboxSaved'); });
 
-    // Initialize
     loadSaved();
-    // Ensure defaults selected if no saved values yet
-    if(!els.wH1.value) els.wH1.value = DEFAULTS.wH1;
-    if(!els.wH2.value) els.wH2.value = DEFAULTS.wH2;
-    if(!els.wP.value)  els.wP.value  = DEFAULTS.wP;
     applyAll();
   </script>
 </body>
